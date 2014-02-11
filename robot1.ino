@@ -20,24 +20,21 @@ void setup() {
 }
 
 void loop() {
-  writeToScreen(stringToChar("Direction:   " + String(Robot.compassRead())), 2);
-  writeToScreen(stringToChar("Temperature: " + getTemperature(temperatureSensor1) + " deg C"), 16);
-  writeToScreen(stringToChar("Light:       " + String(Robot.analogRead(lightPin))), 30);
+  writeToScreen("Direction:   " + String(Robot.compassRead()), 2);
+  writeToScreen("Temperature: " + getTemperature(temperatureSensor1) + " deg C", 16);
+  writeToScreen("Light:       " + String(Robot.analogRead(lightPin)), 30);
   setLEDStatus(true, false, false);
   setLEDStatus(false, true, false);
   setLEDStatus(false, false, true);
 }
 
-void writeToScreen(char* text, int y) {
-  Robot.background(255, 255, 255);
-  Robot.stroke(0, 0, 0);
-  Robot.text(text,2,y);
-}
-
-char* stringToChar(String text) {
+void writeToScreen(String text, int y) {
   char buffer[text.length() + 1];
   text.toCharArray(buffer, text.length() + 1);
-  return buffer;
+  
+  Robot.background(255, 255, 255);
+  Robot.stroke(0, 0, 0);
+  Robot.text(buffer,2,y);
 }
 
 void setLEDStatus(boolean red, boolean green, boolean blue)  {

@@ -1,81 +1,50 @@
 #include <ArduinoRobot.h>
 #include <OneWire.h>
-#include <DallasTemperature.h>
 
-//Sensors
-const int lightPin = TKD1; //LDR pin - input
-OneWire oneWire(TKD2);
-DallasTemperature sensors(&oneWire);
+// Sensors
+const int lightPin = TKD1;
 
-//RGB Status LED
-const int redLEDPin = TKD5; 
+//OneWire ds(TKD2);
+
+// RGB Status LED
+const int redLEDPin = TKD5;
 const int greenLEDPin = TKD3;
 const int blueLEDPin = TKD4;
 
-String screenText = "";
-int compassValue;
-
-
-
-void setup()  {
-  pinMode(greenLEDPin, OUTPUT)
-  pinMode(blueLEDPin, OUTPUT)
-  pinMode(redLEDPin, OUTPUT)
-  //digitalWrite(ledPin, 0);             
-  //fire up modules
-  Serial.begin(9600);
-
+void setup() {
+  pinMode(redLEDPin,   OUTPUT);
+  pinMode(greenLEDPin, OUTPUT);
+  pinMode(blueLEDPin,  OUTPUT);
+  
   Robot.begin();
   Robot.beginTFT();
- // Robot.beginSD();
- // Robot.displayLogos();
-     // Start up the library
-  sensors.begin();
-  
 }
 
-void setLEDstatusRed()  {
-  Robot.digitalWrite(greenLEDPin,0);
-  Robot.digitalWrite(blueLEDPin,0);
-  Robot.digitalWrite(redLEDPin, 1);             
+void loop() {
+  String x = "0.00";
+  writeToScreen(stringToChar("Direction:   " + Robot.compassRead()), 2);
+  writeToScreen(stringToChar("Temperature: " + x + " deg C"), 16);
+  writeToScreen(stringToChar("Light:       " + Robot.analogRead(lightPin)), 30);
+  setLEDStatus(true, false, false);
+  setLEDStatus(false, true, false);
+  setLEDStatus(false, false, true);
 }
 
-void setLEDstatusGreen()  {
-  Robot.digitalWrite(greenLEDPin,1);
-  Robot.digitalWrite(blueLEDPin,0);
-  Robot.digitalWrite(redLEDPin, 0);             
+void writeToScreen(char* text, int y) {
+  Robot.background(255, 255, 255);
+  Robot.stroke(0, 0, 0);
+  Robot.text(text,2,y);
 }
 
-void setLEDstatusBlue()  {
-  Robot.digitalWrite(greenLEDPin,0);
-  Robot.digitalWrite(blueLEDPin,1);
-  Robot.digitalWrite(redLEDPin, 0);             
+char* stringToChar(String text) {
+  char buffer[text.length()];
+  text.toCharArray(buffer, text.length());
+  return buffer;
 }
 
-void writeToScreen(String text) {
-  Robot.stroke(255, 255, 255);        // choose the color white
-  Robot.text(screenText,0,0);
-  screenText = text;
-  Robot.stroke(0, 0, 0);              // choose the color black
-  Robot.text(text,0,0);
-}
-
-void loop()  {
-   sensors.requestTemperatures(); // Send the command to get temperatures
-  compassValue = Robot.compassRead();
-  writeToScreen("Facing - " + String(compassValue));
-  //Robot.stroke(0, 0, 0);              // choose the color black
-  //Robot.text("Facing - " + compassValue,0,0);
-  Serial.println(Robot.analogRead(lightPin));
-  Serial.println(sensors.getTempCByIndex(0) );
-  Serial.println(compassValue);
-  setLEDstatusGreen();
-  delay(2000);                         // 4 second LED blink, good for wireless programming
-  setLEDstatusRed();  
-  delay(2000);
-  setLEDstatusBlue();
-  //Robot.fill(0,0,0);
-  //Robot.stroke(255, 255, 255);        // choose the color white
-  //Robot.text("Facing" + compassValue,0,0);
-  delay(4000);  
+void setLEDStatus(boolean red, boolean green, boolean blue)  {
+  Robot.digitalWrite(greenLEDPin, red);
+  Robot.digitalWrite(blueLEDPin,  green);
+  Robot.digitalWrite(redLEDPin,   blue);
+  delay(1000);
 }

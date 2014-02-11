@@ -21,7 +21,6 @@ void setup() {
 }
 
 void loop() {
-  String x = "0.00";
   writeToScreen(stringToChar("Direction:   " + String(Robot.compassRead())), 2);
   writeToScreen(stringToChar("Temperature: " + getTemperature(temperatureSensor1) + " deg C"), 16);
   writeToScreen(stringToChar("Light:       " + String(Robot.analogRead(lightPin))), 30);

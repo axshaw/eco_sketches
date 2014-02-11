@@ -3,7 +3,6 @@
 
 // Sensors
 const int lightPin = TKD1;
-
 OneWire temperatureSensor1(TKD2);
 
 // RGB Status LED
@@ -36,8 +35,8 @@ void writeToScreen(char* text, int y) {
 }
 
 char* stringToChar(String text) {
-  char buffer[text.length()];
-  text.toCharArray(buffer, text.length());
+  char buffer[text.length() + 1];
+  text.toCharArray(buffer, text.length() + 1);
   return buffer;
 }
 

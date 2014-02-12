@@ -1,14 +1,15 @@
 #include <ArduinoRobot.h>
 #include <OneWire.h>
 
-// Sensors
-const int lightPin = TKD1;
-OneWire temperatureSensor1(TKD2);
-
-// RGB Status LED
+// Pins
+const int lightPin = TKD0;
+const int temperatureSensorPin = TKD1;
 const int redLEDPin = TKD5;
 const int greenLEDPin = TKD3;
 const int blueLEDPin = TKD4;
+
+// Sensors
+OneWire temperatureSensor1(temperatureSensorPin);
 
 void setup() {
   pinMode(redLEDPin,   OUTPUT);
@@ -19,10 +20,14 @@ void setup() {
   Robot.beginTFT();
 }
 
-void loop() {
-  writeToScreen("Dir   : " + String(Robot.compassRead()), 2);
-  writeToScreen("Temp  : " + getTemperature(temperatureSensor1) + " deg C", 16);
-  writeToScreen("Light : " + String(Robot.analogRead(lightPin)), 30);
+void loop() {  
+  String dir = String(Robot.compassRead());
+  String temp = getTemperature(temperatureSensor1);
+  String light = String(Robot.analogRead(lightPin));
+  Robot.background(0, 0, 0);
+  writeToScreen("Dir   : " + dir, 2);
+  writeToScreen("Temp  : " + temp  + " deg C", 16);
+  writeToScreen("Light : " + light, 30);
   setLEDStatus(true, false, false);
   setLEDStatus(false, true, false);
   setLEDStatus(false, false, true);
@@ -31,9 +36,7 @@ void loop() {
 void writeToScreen(String text, int y) {
   char buffer[20];
   text.toCharArray(buffer, 20);
-  
-  Robot.background(255, 255, 255);
-  Robot.stroke(0, 0, 0);
+  Robot.stroke(255, 255, 255);
   Robot.text(buffer,2,y);
 }
 

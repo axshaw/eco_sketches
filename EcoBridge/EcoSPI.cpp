@@ -70,20 +70,22 @@ void EcoSPI::_getReading(byte sensor, byte &a) {
 void EcoSPI::_getReading(byte sensor, int &a) {
   // enable Slave Select
   byte bytea, byteb;
+
+  byte b[4];
   
   digitalWrite(_interruptPin, LOW);   
   
   _transferAndWait (sensor);  // handshake command
   _transferAndWait (0);
-  bytea = _transferAndWait (0);
-  byteb = _transferAndWait (0);
-  
-  a = 0;
-  a |= byteb << 8;
-  a |= bytea;
-  
+  b[0] = _transferAndWait (0);
+  b[1] = _transferAndWait (0);
+  b[2] = _transferAndWait (0);
+  b[3] = _transferAndWait (0);
+
   // disable Slave Select
   digitalWrite(_interruptPin, HIGH);
+
+  a = _bytesToInteger(b);  
 }
 
 void EcoSPI::_getReading(byte sensor, float &a) {
@@ -97,42 +99,6 @@ void EcoSPI::_getReading(byte sensor, float &a) {
   // disable Slave Select
   digitalWrite(_interruptPin, HIGH);
 }
-
-
-void EcoSPI::_send(byte command, int value)
-{
-  digitalWrite(_interruptPin, LOW);
-  
-  //SPI.transfer(START_BYTE);
-  
-  //SPI.transfer(command);
-  
-  //SPI.transfer(value);
-  
-  //for (int i = 0; i < sizeof(command); i++) {
-  //  SPI.transfer(command[i]);
-  //}
-
-  //SPI.transfer(END_BYTE);
-  
-  digitalWrite(_interruptPin, HIGH); 
-}
-
-void EcoSPI::_listen()
-{
-  
-}
-
-char EcoSPI::_spi_transfer(volatile char data)
-{
- SPDR = data; // Start the transmission
- //while (!(SPSR & (1<
- //{
- //};
- return SPDR; // return the received byte
-}
-
-
 
 byte EcoSPI::_transferAndWait (const byte what)
 {
@@ -150,9 +116,9 @@ long EcoSPI::_bytesToInteger(byte b[4]) {
   return val;
 }
 
-void EcoSPI::_integerToBytes(long val, byte b[4]) {
+/*void EcoSPI::_integerToBytes(long val, byte b[4]) {
   b[0] = (byte )((val >> 24) & 0xff);
   b[1] = (byte )((val >> 16) & 0xff);
   b[2] = (byte )((val >> 8) & 0xff);
   b[3] = (byte )(val & 0xff);
-}
+}*/

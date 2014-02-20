@@ -32,7 +32,7 @@ NewPing sonar[SONAR_NUM] = {        // Sensor object array.
   NewPing(7,  7,  MAX_DISTANCE),
   NewPing(8,  8,  MAX_DISTANCE),
   NewPing(9,  9,  MAX_DISTANCE),
-  NewPing(A0,  A0,  MAX_DISTANCE)
+  NewPing(A0, A0, MAX_DISTANCE)
 };
 
 // what to do with incoming data
@@ -79,8 +79,9 @@ void loop (void)
 }  // end of loop
 
 void echoCheck() { // If ping received, set the sensor distance to array.
-  if (sonar[currentSensor].check_timer())
+  if (sonar[currentSensor].check_timer()) {
     cm[currentSensor] = sonar[currentSensor].ping_result / US_ROUNDTRIP_CM;
+  }
 }
 
 // SPI interrupt routine
@@ -99,61 +100,48 @@ ISR (SPI_STC_vect)
     SPDR = SPI_ULTRASONICS;
     break;
   case ULTRASONIC_0:
-    if (byteCount++ == 0) {
-      SPDR = (byte)(cm[0] & 0xff);
-    } else {
-      SPDR = (byte)((cm[0] >> 8) & 0xff);
-    }
+    SPDR = getByte(byteCount++, cm[0]);
     break;
   case ULTRASONIC_45:
-    if (byteCount++ == 0) {
-      SPDR = (byte)(cm[1] & 0xff);
-    } else {
-      SPDR = (byte)((cm[1] >> 8) & 0xff);
-    }
+    SPDR = getByte(byteCount++, cm[1]);
     break;
   case ULTRASONIC_90:
-    if (byteCount++ == 0) {
-      SPDR = (byte)(cm[2] & 0xff);
-    } else {
-      SPDR = (byte)((cm[2] >> 8) & 0xff);
-    }
+    SPDR = getByte(byteCount++, cm[2]);
     break;
   case ULTRASONIC_135:
-    if (byteCount++ == 0) {
-      SPDR = (byte)(cm[3] & 0xff);
-    } else {
-      SPDR = (byte)((cm[3] >> 8) & 0xff);
-    }
+    SPDR = getByte(byteCount++, cm[3]);
     break;
   case ULTRASONIC_180:
-    if (byteCount++ == 0) {
-      SPDR = (byte)(cm[4] & 0xff);
-    } else {
-      SPDR = (byte)((cm[4] >> 8) & 0xff);
-    }
+    SPDR = getByte(byteCount++, cm[4]);
     break;
   case ULTRASONIC_225:
-    if (byteCount++ == 0) {
-      SPDR = (byte)(cm[5] & 0xff);
-    } else {
-      SPDR = (byte)((cm[5] >> 8) & 0xff);
-    }
+    SPDR = getByte(byteCount++, cm[5]);
     break;
   case ULTRASONIC_270:
-    if (byteCount++ == 0) {
-      SPDR = (byte)(cm[6] & 0xff);
-    } else {
-      SPDR = (byte)((cm[6] >> 8) & 0xff);
-    }
+    SPDR = getByte(byteCount++, cm[6]);
     break;
   case ULTRASONIC_315:
-    if (byteCount++ == 0) {
-      SPDR = (byte)(cm[7] & 0xff);
-    } else {
-      SPDR = (byte)((cm[7] >> 8) & 0xff);
-    }
+    SPDR = getByte(byteCount++, cm[7]);
     break;
   } // end of switch
 }  // end of interrupt service routine (ISR) SPI_STC_vect
 
+byte getByte(int byteIndex, long val) {
+  switch(byteIndex)
+  {
+  case 0:
+    return (byte)((val >> 24) & 0xff);
+    break;
+  case 1:
+    return (byte)((val >> 16) & 0xff);
+    break;
+  case 2:  
+    return (byte)((val >> 8) & 0xff);
+    break;
+  case 3:
+    return (byte)(val & 0xff);
+    break;
+  default:
+    return 0x00;
+  }
+}

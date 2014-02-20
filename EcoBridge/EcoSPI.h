@@ -40,12 +40,9 @@ class EcoSPI
     void _getReading(byte sensor, float &a);
     int _interruptPin;
     byte _device;
-    void _send(byte command, int value);
-    void _listen();
-    char _spi_transfer(volatile char data);
     byte _transferAndWait (const byte what);
     long _bytesToInteger(byte b[4]);
-    void _integerToBytes(long val, byte b[4]);
+    //void _integerToBytes(long val, byte b[4]);
 };
 
 #endif
